@@ -49,4 +49,9 @@ const logInUser = async (req, res) => {
     }
 };
 
-export { logInUser, registerUser };
+const sendBackInfo = (req, res) => {
+    const info = res.locals.user;
+    res.status(200).send(info);
+};
+
+export { logInUser, registerUser, sendBackInfo };
