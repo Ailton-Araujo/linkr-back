@@ -1,10 +1,10 @@
 import db from "../database/database.connection.js";
 import bcrypt from "bcrypt";
 
-async function getUserByAll(id, name, email) {
+async function getUserByAll(id, username, email) {
   return db.query(
-    `SELECT * FROM users WHERE users.id= $1 AND users.name=$2 AND users.email= $3;`,
-    [id, name, email]
+    `SELECT * FROM users WHERE users.id= $1 AND users.username=$2 AND users.email= $3;`,
+    [id, username, email]
   );
 }
 
@@ -14,4 +14,9 @@ async function registerNewUser({username, email, password, pictureUrl}) {
     return result;
   };
 
-export { getUserByAll, registerNewUser };
+async function getPasswordByEmail (email) {
+    const result = await db.query(`SELECT * FROM users WHERE email=$1`, [email]);
+    return result;
+};
+
+export { getUserByAll, getPasswordByEmail, registerNewUser };
