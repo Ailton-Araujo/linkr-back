@@ -1,5 +1,5 @@
 import { Router } from "express";
-import validateAuth from "../middlewares/validateAuth";
+import validateAuth from "../middlewares/validateAuth.js";
 
 const postsRouter = Router();
 
