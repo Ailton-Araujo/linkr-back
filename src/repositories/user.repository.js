@@ -7,4 +7,9 @@ async function getUserByAll(id, name, email) {
   );
 }
 
-export { getUserByAll };
+async function getPasswordByEmail (email) {
+    const result = await db.query(`SELECT * FROM users WHERE email=$1`, [email]);
+    return result;
+};
+
+export { getUserByAll, getPasswordByEmail };
