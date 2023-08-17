@@ -4,8 +4,10 @@ import {
   insertHashTags,
   selectLinkrs,
   getPostById,
+  getPostsByUserId,
   updatePost,
 } from "../repositories/post.repository.js";
+
 
 async function postLinkr(req, res) {
   const { link, description, hashtags } = req.body;
@@ -17,7 +19,6 @@ async function postLinkr(req, res) {
     for (const hashtag of hashtags) {
       await insertHashTags(hashtag, idPost.rows[0].id);
     }
-
     res.status(201).send(idPost.rows[0]);
   } catch (error) {
     res.status(500).send(error.message);
@@ -66,4 +67,17 @@ async function patchPost(req, res) {
   }
 }
 
-export { postLinkr, getLinkrs, patchPost };
+async function getPostsByUser(req, res){
+    const { userId } = req.params;
+    
+    try {
+        const user = await getUserById(userId);
+        if (user.rows.length === 0) return res.sendStatus(404);
+        const posts = await getPostsByUserId(userId);
+        return res.send(posts.rows);
+    } catch(err){
+        res.status(500);
+    }
+}
+
+export { postLinkr, getLinkrs, patchPost,getPostsByUser };

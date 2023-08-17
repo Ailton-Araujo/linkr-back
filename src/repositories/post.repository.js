@@ -63,4 +63,15 @@ function updatePost(id, newDescription) {
   return resp;
 }
 
-export { insertPost, insertHashTags, selectLinkrs, getPostById, updatePost };
+function getPostsByUserId(userId){
+    const posts = db.query(`
+        SELECT *
+        FROM posts
+        WHERE "userId"=$1
+        ORDER BY id DESC
+        LIMIT 20;
+    `, [userId]);
+    return posts;
+}
+
+export { insertPost, insertHashTags, selectLinkrs, getPostById, updatePost, getPostsByUserId };

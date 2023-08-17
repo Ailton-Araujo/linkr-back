@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-import { getPasswordByEmail, registerNewUser } from "../repositories/user.repository.js";
+import { getAllUsers, getPasswordByEmail, getUserByUsername, registerNewUser } from "../repositories/user.repository.js";
 
 dotenv.config();
 
@@ -54,4 +54,19 @@ const sendBackInfo = (req, res) => {
     res.status(200).send(info);
 };
 
-export { logInUser, registerUser, sendBackInfo };
+async function getUsers(req, res){
+    const { username } = req.query;
+    let users;
+    try{
+        if (!username)
+            users = await getAllUsers();
+        else
+            users = await getUserByUsername(username);
+        res.send(users.rows);
+    }catch(err){
+        res.status(500).send(err.message);
+    }
+    
+}
+
+export { logInUser, registerUser, sendBackInfo, getUsers };
