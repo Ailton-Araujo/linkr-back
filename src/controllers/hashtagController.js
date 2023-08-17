@@ -8,6 +8,7 @@ export async function getPostsByHashtagRoute(req, res) {
 
     return res.status(200).send(posts);
   } catch (error) {
-    return res.status(500).send(error.message);
+    console.log(error);
+    return res.status(500).send(error);
   }
 }
