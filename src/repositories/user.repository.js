@@ -21,20 +21,20 @@ async function getPasswordByEmail (email) {
 
 function getUserById(id){
   return db.query(
-    `SELECT * FROM users WHERE users.id=$1;`,
+    `SELECT id, username, image FROM users WHERE users.id=$1;`,
     [id]
   );
 }
 
 function getUserByUsername(username){
   return db.query(
-    `SELECT * FROM users WHERE username ILIKE $1;`, [`%${username}%`]
+    `SELECT id, username, image FROM users WHERE username ILIKE $1;`, [`%${username}%`]
   );
 }
 
 function getAllUsers(){
   return db.query(`
-    SELECT * FROM users;
+    SELECT id, username, image FROM users;
   `)
 }
 
