@@ -14,9 +14,9 @@ async function postLinkr(req, res) {
   try {
     const idPost = await insertPost(link, description, info);
 
-    hashtags.forEach(async (element) => {
-      await insertHashTags(element, idPost.rows[0].id);
-    });
+    for (const hashtag of hashtags) {
+      await insertHashTags(hashtag, idPost.rows[0].id);
+    }
 
     res.status(201).send("Post Published");
   } catch (error) {
