@@ -1,4 +1,5 @@
-import { getPostById, updatePost } from "../repositories/post.repository";
+import { getPostById, getPostsByUserId, updatePost } from "../repositories/post.repository.js";
+import { getUserById } from "../repositories/user.repository.js";
 
 
 export async function patchPost(req, res){
@@ -13,5 +14,18 @@ export async function patchPost(req, res){
         res.sendStatus(204);
     } catch(err){
         res.status(500).send(err.message);
+    }
+}
+
+export async function getPostsByUser(req, res){
+    const { userId } = req.params;
+    
+    try {
+        const user = await getUserById(userId);
+        if (user.rows.length === 0) return res.sendStatus(404);
+        const posts = await getPostsByUserId(userId);
+        return res.send(posts.rows);
+    } catch(err){
+        res.status(500);
     }
 }

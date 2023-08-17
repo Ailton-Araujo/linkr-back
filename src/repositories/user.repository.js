@@ -7,4 +7,11 @@ async function getUserByAll(id, name, email) {
   );
 }
 
-export { getUserByAll };
+async function getUserById(id){
+  return db.query(
+    `SELECT * FROM users WHERE users.id= $1;`,
+    [id]
+  );  
+}
+
+export { getUserByAll, getUserById };
