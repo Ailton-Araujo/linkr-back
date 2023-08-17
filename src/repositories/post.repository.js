@@ -1,20 +1,61 @@
-import db from "../database/database.connection";
+import db from "../database/database.connection.js";
 
+function insertPost(link, description, info) {
+  const idPost = db.query(
+    `INSERT INTO posts ("userId", link, description) VALUES ($1,$2,$3)
+    RETURNING id`,
+    [info.id, link, description]
+  );
+  return idPost;
+}
 
-export function getPostById(id){
-    const post = db.query(`
+function insertHashTags(element, idPost) {
+  return db.query(
+    `WITH "insertTry" AS (
+        INSERT INTO hashtags (hashtag) VALUES ($1)
+        ON CONFLICT DO NOTHING
+        RETURNING id
+    )
+    INSERT INTO "hashPost" ("hashtagId", "postId")
+    SELECT COALESCE(it.id, h.id), ${idPost}
+    FROM "insertTry" it
+    LEFT JOIN hashtags h ON h.hashtag = $1
+    WHERE it.id IS NOT NULL
+    UNION
+    SELECT id, ${idPost}
+    FROM hashtags WHERE hashtag = $1;`,
+    [element]
+  );
+}
+
+function insertHashPost(idHash, idPost) {
+  db.query(`INSERT INTO "hashPost" ("hashtagId", "postId") VALUES($1, $2)`, [
+    idHash,
+    idPost,
+  ]);
+}
+
+function getPostById(id) {
+  const post = db.query(
+    `
         SELECT *
         FROM posts
         WHERE id=$1;
-    `, [id]);
-    return post;
+    `,
+    [id]
+  );
+  return post;
 }
-
-export function updatePost(id, newDescription){
-    const resp = db.query(`
+function updatePost(id, newDescription) {
+  const resp = db.query(
+    `
         UPDATE posts
         SET description=$1
         WHERE id=$2;
-    `, [newDescription, id]);
-    return resp;
+    `,
+    [newDescription, id]
+  );
+  return resp;
 }
+
+export { insertPost, insertHashTags, insertHashPost, getPostById, updatePost };
