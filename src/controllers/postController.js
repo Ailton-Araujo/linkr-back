@@ -7,6 +7,7 @@ import {
   getPostsByUserId,
   updatePost,
 } from "../repositories/post.repository.js";
+import { getUserById } from "../repositories/user.repository.js";
 
 
 async function postLinkr(req, res) {
