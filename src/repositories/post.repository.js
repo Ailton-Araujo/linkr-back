@@ -27,12 +27,17 @@ function insertHashTags(element, idPost) {
     [element]
   );
 }
-
-function insertHashPost(idHash, idPost) {
-  db.query(`INSERT INTO "hashPost" ("hashtagId", "postId") VALUES($1, $2)`, [
-    idHash,
-    idPost,
-  ]);
+function selectLinkrs() {
+  return db.query(`
+  SELECT JSON_BUILD_OBJECT(
+    'username', users.username,
+    'image', users.image
+  ) AS user, posts.id, link, description
+  FROM posts
+  JOIN users ON posts."userId"=users.id
+  ORDER BY posts.id DESC
+  LIMIT 20
+  `);
 }
 
 function getPostById(id) {
@@ -58,4 +63,4 @@ function updatePost(id, newDescription) {
   return resp;
 }
 
-export { insertPost, insertHashTags, insertHashPost, getPostById, updatePost };
+export { insertPost, insertHashTags, selectLinkrs, getPostById, updatePost };

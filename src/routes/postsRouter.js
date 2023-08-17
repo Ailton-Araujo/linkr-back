@@ -2,7 +2,7 @@ import { Router } from "express";
 import validateAuth from "../middlewares/validateAuth.js";
 import validateSchema from "../middlewares/validateSchema.js";
 import schemaLinkr from "../schemas/linkr.js";
-import { postLinkr } from "../controllers/postController.js";
+import { postLinkr, getLinkrs } from "../controllers/postController.js";
 
 const postsRouter = Router();
 
@@ -12,6 +12,9 @@ postsRouter.post(
   validateSchema(schemaLinkr),
   postLinkr
 );
+
+postsRouter.get("/timeline", validateAuth, getLinkrs);
+
 postsRouter.patch("/posts/:id", validateAuth);
 
 export default postsRouter;

@@ -1,7 +1,8 @@
+import urlMetadata from "url-metadata";
 import {
   insertPost,
   insertHashTags,
-  insertHashPost,
+  selectLinkrs,
   getPostById,
   updatePost,
 } from "../repositories/post.repository.js";
@@ -23,6 +24,33 @@ async function postLinkr(req, res) {
   }
 }
 
+async function getLinkrs(req, res) {
+  try {
+    const linkrs = await selectLinkrs();
+    let data = [];
+
+    for (const post of linkrs.rows) {
+      const metadata = await urlMetadata(post.link);
+      data = [
+        ...data,
+        {
+          post,
+          meta: {
+            title: metadata["og:title"],
+            description: metadata["og:description"],
+            image: metadata["og:image"],
+          },
+        },
+      ];
+    }
+
+    res.status(200).send(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
 async function patchPost(req, res) {
   const { id } = req.params;
   const { description } = req.body;
@@ -38,4 +66,4 @@ async function patchPost(req, res) {
   }
 }
 
-export { postLinkr, patchPost };
+export { postLinkr, getLinkrs, patchPost };
