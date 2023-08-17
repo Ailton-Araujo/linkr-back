@@ -7,6 +7,7 @@ import {
   insertHashTags,
   selectLinkrs,
   getPostById,
+  getUserById,
   getPostsByUserId,
   updatePost,
 } from "../repositories/post.repository.js";
