@@ -23,8 +23,8 @@ export function getPostsByUserId(userId){
     const posts = db.query(`
         SELECT *
         FROM posts
-        WHERE userId=$1
-        SORT BY id DESC;
+        WHERE "userId"=$1
+        ORDER BY id DESC;
     `, [userId]);
     return posts;
 }

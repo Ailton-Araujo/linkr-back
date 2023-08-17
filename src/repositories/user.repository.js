@@ -19,11 +19,23 @@ async function getPasswordByEmail (email) {
     return result;
 };
 
-async function getUserById(id){
+function getUserById(id){
   return db.query(
     `SELECT * FROM users WHERE users.id= $1;`,
     [id]
-  );  
+  );
 }
 
-export { getUserByAll, getPasswordByEmail, registerNewUser, getUserById };
+function getUserByUsername(username){
+  return db.query(
+    `SELECT * FROM users WHERE username ILIKE $1;`, [`%${username}%`]
+  );
+}
+
+function getAllUsers(){
+  return db.query(`
+    SELECT * FROM users;
+  `)
+}
+
+export { getUserByAll, getPasswordByEmail, registerNewUser, getUserById, getUserByUsername, getAllUsers };
