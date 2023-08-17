@@ -24,7 +24,8 @@ export function getPostsByUserId(userId){
         SELECT *
         FROM posts
         WHERE "userId"=$1
-        ORDER BY id DESC;
+        ORDER BY id DESC
+        LIMIT 20;
     `, [userId]);
     return posts;
 }
