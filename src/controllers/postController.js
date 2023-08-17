@@ -7,10 +7,11 @@ import {
   insertHashTags,
   selectLinkrs,
   getPostById,
-  getUserById,
   getPostsByUserId,
   updatePost,
 } from "../repositories/post.repository.js";
+
+import { getUserById } from "../repositories/user.repository.js";
 
 async function postLinkr(req, res) {
   const { link, description, hashtags } = req.body;
