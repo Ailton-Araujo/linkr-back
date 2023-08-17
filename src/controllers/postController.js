@@ -77,8 +77,24 @@ async function getPostsByUser(req, res) {
   try {
     const user = await getUserById(userId);
     if (user.rows.length === 0) return res.sendStatus(404);
-    const posts = await getPostsByUserId(userId);
-    return res.send(posts.rows);
+    const linkrs = await getPostsByUserId(userId);
+    let data = [];
+
+    for (const post of linkrs.rows) {
+      const metadata = await urlMetadata(post.link);
+      data = [
+        ...data,
+        {
+          post,
+          meta: {
+            title: metadata["og:title"],
+            description: metadata["og:description"],
+            image: metadata["og:image"],
+          },
+        },
+      ];
+    }
+    return res.send(data);
   } catch (err) {
     res.status(500);
   }

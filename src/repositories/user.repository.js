@@ -21,7 +21,7 @@ async function getPasswordByEmail (email) {
 
 function getUserById(id){
   return db.query(
-    `SELECT * FROM users WHERE users.id= $1;`,
+    `SELECT * FROM users WHERE users.id=$1;`,
     [id]
   );
 }
