@@ -18,7 +18,7 @@ async function postLinkr(req, res) {
       await insertHashTags(hashtag, idPost.rows[0].id);
     }
 
-    res.status(201).send("Post Published");
+    res.status(201).send(idPost.rows[0]);
   } catch (error) {
     res.status(500).send(error.message);
   }
