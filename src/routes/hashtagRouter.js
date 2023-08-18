@@ -4,6 +4,6 @@ import validateAuth from "../middlewares/validateAuth.js";
 
 const hashtagRouter = Router();
 
-hashtagRouter.get("/hashtag/:hashtag", getPostsByHashtagRoute);
+hashtagRouter.get("/hashtag/:hashtag", validateAuth, getPostsByHashtagRoute);
 
 export default hashtagRouter;
