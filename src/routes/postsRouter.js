@@ -2,7 +2,14 @@ import { Router } from "express";
 import validateAuth from "../middlewares/validateAuth.js";
 import validateSchema from "../middlewares/validateSchema.js";
 import schemaLinkr from "../schemas/linkr.js";
-import { postLinkr, getLinkrs, getPostsByUser, patchPost } from "../controllers/postController.js";
+import schemaLike from "../schemas/like.js";
+import {
+  postLinkr,
+  getLinkrs,
+  getPostsByUser,
+  patchPost,
+  postLike,
+} from "../controllers/postController.js";
 
 const postsRouter = Router();
 
@@ -18,5 +25,7 @@ postsRouter.get("/timeline", validateAuth, getLinkrs);
 postsRouter.patch("/posts/:id", validateAuth, patchPost);
 
 postsRouter.get("/posts/users/:userId", validateAuth, getPostsByUser);
+
+postsRouter.post("/likes", validateAuth, validateSchema(schemaLike), postLike);
 
 export default postsRouter;

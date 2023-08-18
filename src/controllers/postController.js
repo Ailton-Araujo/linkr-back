@@ -9,6 +9,8 @@ import {
   getPostById,
   getPostsByUserId,
   updatePost,
+  insertLike,
+  deleteLike,
 } from "../repositories/post.repository.js";
 
 import { getUserById } from "../repositories/user.repository.js";
@@ -150,4 +152,20 @@ async function getPostsByUser(req, res) {
   }
 }
 
-export { postLinkr, getLinkrs, patchPost, getPostsByUser };
+async function postLike(req, res) {
+  const { userId, postId, type } = req.body;
+  let userLike;
+  try {
+    if (type === "like") {
+      userLike = await insertLike(userId, postId, type);
+    }
+    if (type === "dislike") {
+      userLike = await deleteLike(userId, postId, type);
+    }
+    res.status(201).send(userLike);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export { postLinkr, getLinkrs, patchPost, getPostsByUser, postLike };
