@@ -31,6 +31,7 @@ function selectLinkrs() {
   return db.query(`
   SELECT JSON_BUILD_OBJECT(
     'username', users.username,
+    'id', users.id,
     'image', users.image
   ) AS user, posts.id, link, description
   FROM posts
@@ -65,11 +66,16 @@ function updatePost(id, newDescription) {
 
 function getPostsByUserId(userId){
     const posts = db.query(`
-        SELECT *
-        FROM posts
-        WHERE "userId"=$1
-        ORDER BY id DESC
-        LIMIT 20;
+      SELECT JSON_BUILD_OBJECT(
+        'username', users.username,
+        'id', users.id,
+        'image', users.image
+      ) AS user, posts.id, link, description
+      FROM posts
+      JOIN users ON posts."userId"=users.id
+      WHERE posts."userId"=$1
+      ORDER BY posts.id DESC
+      LIMIT 20;
     `, [userId]);
     return posts;
 }
