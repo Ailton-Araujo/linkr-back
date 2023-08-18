@@ -5,13 +5,13 @@ export async function getPostsByHashtag(hashtag) {
     `SELECT 
       posts.*, 
       users.image AS "userImage",
-      users.name AS "userName",
+      users.username AS "userName",
       COUNT(likes.id) AS "likeCount"
     FROM posts
     JOIN "hashPost" ON posts.id = "hashPost"."postId"
     JOIN hashtags ON "hashPost"."hashtagId" = hashtags.id
     JOIN users ON users.id = posts."userId"
-    JOIN likes ON likes."postId" = post.id
+    JOIN likes ON likes."postId" = posts.id
     WHERE hashtags.hashtag = $1
     GROUP BY posts.id, "userImage", "userName";`,
     [hashtag]
