@@ -11,6 +11,7 @@ import {
   updatePost,
   insertLike,
   deleteLike,
+  deleteHashPost,
 } from "../repositories/post.repository.js";
 
 import { getUserById } from "../repositories/user.repository.js";
@@ -96,13 +97,17 @@ async function getLinkrs(req, res) {
 
 async function patchPost(req, res) {
   const { id } = req.params;
-  const { description } = req.body;
+  const { description, hashtags } = req.body;
 
   try {
     const post = await getPostById(id);
     if (post.rows.length === 0) return res.sendStatus(404);
     if (post.rows[0].userId !== res.locals.user.id) return res.sendStatus(401);
+    await deleteHashPost(id);
     await updatePost(id, description);
+    for (const hashtag of hashtags) {
+      await insertHashTags(hashtag, id);
+    }
     res.sendStatus(204);
   } catch (err) {
     res.status(500).send(err.message);
