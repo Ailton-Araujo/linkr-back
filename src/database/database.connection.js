@@ -6,7 +6,6 @@ const { Pool } = pg;
 
 const configDatabase = {
   connectionString: process.env.DATABASE_URL,
-  ssl: false,
 };
 
 if (process.env.NODE_ENV === "production") configDatabase.ssl = true;
@@ -19,5 +18,15 @@ try {
 } catch (err) {
   (err) => console.log("ERROR:", err.message || err);
 }
+
+db.on("error", async (err) => {
+  console.error("Unexpected error on PostgreSQL connection:", err);
+  try {
+    await db.connect();
+    console.log("PostGreSQL DataBase connected successfully !");
+  } catch (err) {
+    (err) => console.log("ERROR:", err.message || err);
+  }
+});
 
 export default db;

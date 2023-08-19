@@ -64,8 +64,9 @@ function updatePost(id, newDescription) {
   return resp;
 }
 
-function getPostsByUserId(userId){
-    const posts = db.query(`
+function getPostsByUserId(userId) {
+  const posts = db.query(
+    `
       SELECT JSON_BUILD_OBJECT(
         'username', users.username,
         'id', users.id,
@@ -76,8 +77,35 @@ function getPostsByUserId(userId){
       WHERE posts."userId"=$1
       ORDER BY posts.id DESC
       LIMIT 20;
-    `, [userId]);
-    return posts;
+    `,
+    [userId]
+  );
+  return posts;
 }
 
-export { insertPost, insertHashTags, selectLinkrs, getPostById, updatePost, getPostsByUserId };
+function insertLike(userId, postId) {
+  db.query(`INSERT INTO likes ("userId", "postId") VALUES ($1,$2)`, [
+    userId,
+    postId,
+  ]);
+  return true;
+}
+
+function deleteLike(userId, postId) {
+  db.query(`DELETE FROM likes WHERE likes."userId"=$1 AND likes."postId"=$2`, [
+    userId,
+    postId,
+  ]);
+  return false;
+}
+
+export {
+  insertPost,
+  insertHashTags,
+  selectLinkrs,
+  getPostById,
+  updatePost,
+  getPostsByUserId,
+  insertLike,
+  deleteLike,
+};
