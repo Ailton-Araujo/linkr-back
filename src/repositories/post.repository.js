@@ -30,12 +30,16 @@ function insertHashTags(element, idPost) {
 function selectLinkrs() {
   return db.query(`
   SELECT JSON_BUILD_OBJECT(
-    'username', users.username,
-    'id', users.id,
-    'image', users.image
-  ) AS user, posts.id, link, description
+    'username', author.username,
+    'id', author.id,
+    'image', author.image
+  ) AS user, posts.id, link, description, 
+  ARRAY_AGG( "usersLikes".username ORDER BY likes.id DESC) AS "postLikes"
   FROM posts
-  JOIN users ON posts."userId"=users.id
+  JOIN users AS author ON posts."userId"=author.id
+  LEFT JOIN likes ON posts.id=likes."postId"
+  LEFT JOIN users AS "usersLikes" ON likes."userId"="usersLikes".id
+  GROUP BY author.username, author.id, author.image, posts.id, link, description
   ORDER BY posts.id DESC
   LIMIT 20
   `);
@@ -68,13 +72,17 @@ function getPostsByUserId(userId) {
   const posts = db.query(
     `
       SELECT JSON_BUILD_OBJECT(
-        'username', users.username,
-        'id', users.id,
-        'image', users.image
-      ) AS user, posts.id, link, description
+        'username', author.username,
+        'id', author.id,
+        'image', author.image
+      ) AS user, posts.id, link, description, 
+      ARRAY_AGG( "usersLikes".username ORDER BY likes.id DESC) AS "postLikes"
       FROM posts
-      JOIN users ON posts."userId"=users.id
+      JOIN users AS author ON posts."userId"=author.id
+      LEFT JOIN likes ON posts.id=likes."postId"
+      LEFT JOIN users AS "usersLikes" ON likes."userId"="usersLikes".id
       WHERE posts."userId"=$1
+      GROUP BY author.username, author.id, author.image, posts.id, link, description
       ORDER BY posts.id DESC
       LIMIT 20;
     `,

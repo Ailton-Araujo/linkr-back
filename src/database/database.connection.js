@@ -19,14 +19,8 @@ try {
   (err) => console.log("ERROR:", err.message || err);
 }
 
-db.on("error", async (err) => {
+db.on("error", (err) => {
   console.error("Unexpected error on PostgreSQL connection:", err);
-  try {
-    await db.connect();
-    console.log("PostGreSQL DataBase connected successfully !");
-  } catch (err) {
-    (err) => console.log("ERROR:", err.message || err);
-  }
 });
 
 export default db;

@@ -9,12 +9,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(router);
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 // Server Listener
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server Running on Port ${port}`);
-});
-app.on("error", async (err) => {
-  console.error("Unexpected error on PostgreSQL connection:", err);
 });
