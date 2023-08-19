@@ -28,9 +28,15 @@ async function postLinkr(req, res) {
     }
 
     try {
-      const metadata = await urlMetadata(post.link);
+      const metadata = await urlMetadata(link);
       const newPost = {
-        post: { description, link, id: idPost.rows[0].id, user: info },
+        post: {
+          description,
+          link,
+          id: idPost.rows[0].id,
+          user: info,
+          postLikes: [null],
+        },
         meta: {
           title: metadata["og:title"],
           description: metadata["og:description"],
@@ -40,7 +46,13 @@ async function postLinkr(req, res) {
       res.status(201).send(newPost);
     } catch (error) {
       const newPost = {
-        post: { description, link, id: idPost.rows[0].id, user: info },
+        post: {
+          description,
+          link,
+          id: idPost.rows[0].id,
+          user: info,
+          postLikes: [null],
+        },
         meta: {
           title: "",
           description: "",
