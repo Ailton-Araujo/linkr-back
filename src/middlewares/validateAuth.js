@@ -9,7 +9,7 @@ export default async function validateAuth(req, res, next) {
   try {
     const { id, username, email } = jwt.verify(
       token,
-      process.env.JWT_SECRET || "721ebddaafd1f5b1598268770c4dd906"
+      process.env.SECRET_KEY || "721ebddaafd1f5b1598268770c4dd906"
     );
 
     const user = await getUserByAll(id, username, email);
