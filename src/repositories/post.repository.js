@@ -107,7 +107,7 @@ function deleteLike(userId, postId) {
   return false;
 }
 
-function deleteHashPost(postId){
+function deleteHashPost(postId) {
   return db.query(`DELETE FROM "hashPost" WHERE "postId"=$1`, [postId]);
 }
 
@@ -120,5 +120,5 @@ export {
   getPostsByUserId,
   insertLike,
   deleteLike,
-  deleteHashPost
+  deleteHashPost,
 };
