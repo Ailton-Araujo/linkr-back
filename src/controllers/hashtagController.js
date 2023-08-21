@@ -1,4 +1,3 @@
-import urlMetadata from "url-metadata";
 import { getPostsByHashtag } from "../repositories/hashtag.repository.js";
 
 export async function getPostsByHashtagRoute(req, res) {

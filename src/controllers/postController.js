@@ -1,4 +1,3 @@
-import urlMetadata from "url-metadata";
 import fetch from "node-fetch";
 globalThis.fetch = fetch;
 
