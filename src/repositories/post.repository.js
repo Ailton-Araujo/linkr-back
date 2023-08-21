@@ -34,7 +34,7 @@ function selectLinkrs() {
     'id', author.id,
     'image', author.image
   ) AS user, posts.id, link, description, 
-  ARRAY_AGG( "usersLikes".username ORDER BY likes.id DESC) AS "postLikes"
+  ARRAY_AGG( "usersLikes".username ORDER BY likes.id ) AS "postLikes"
   FROM posts
   JOIN users AS author ON posts."userId"=author.id
   LEFT JOIN likes ON posts.id=likes."postId"
@@ -76,7 +76,7 @@ function getPostsByUserId(userId) {
         'id', author.id,
         'image', author.image
       ) AS user, posts.id, link, description, 
-      ARRAY_AGG( "usersLikes".username ORDER BY likes.id DESC) AS "postLikes"
+      ARRAY_AGG( "usersLikes".username ORDER BY likes.id ) AS "postLikes"
       FROM posts
       JOIN users AS author ON posts."userId"=author.id
       LEFT JOIN likes ON posts.id=likes."postId"
