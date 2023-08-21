@@ -5,7 +5,7 @@
 -- Dumped from database version 15.3
 -- Dumped by pg_dump version 15.3
 
--- Started on 2023-08-18 18:55:41
+-- Started on 2023-08-21 00:35:01
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,7 +31,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 223 (class 1259 OID 16580)
+-- TOC entry 223 (class 1259 OID 16626)
 -- Name: hashPost; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -43,7 +43,7 @@ CREATE TABLE public."hashPost" (
 
 
 --
--- TOC entry 222 (class 1259 OID 16579)
+-- TOC entry 222 (class 1259 OID 16625)
 -- Name: hashPost_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -100,7 +100,7 @@ ALTER SEQUENCE public.hashtags_id_seq OWNED BY public.hashtags.id;
 
 
 --
--- TOC entry 221 (class 1259 OID 16573)
+-- TOC entry 221 (class 1259 OID 16619)
 -- Name: likes; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -112,7 +112,7 @@ CREATE TABLE public.likes (
 
 
 --
--- TOC entry 220 (class 1259 OID 16572)
+-- TOC entry 220 (class 1259 OID 16618)
 -- Name: likes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -208,7 +208,7 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- TOC entry 3016 (class 2604 OID 16583)
+-- TOC entry 3016 (class 2604 OID 16629)
 -- Name: hashPost id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -224,7 +224,7 @@ ALTER TABLE ONLY public.hashtags ALTER COLUMN id SET DEFAULT nextval('public.has
 
 
 --
--- TOC entry 3015 (class 2604 OID 16576)
+-- TOC entry 3015 (class 2604 OID 16622)
 -- Name: likes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -248,7 +248,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- TOC entry 3030 (class 2606 OID 16585)
+-- TOC entry 3030 (class 2606 OID 16631)
 -- Name: hashPost hashPost_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -275,7 +275,7 @@ ALTER TABLE ONLY public.hashtags
 
 
 --
--- TOC entry 3028 (class 2606 OID 16578)
+-- TOC entry 3028 (class 2606 OID 16624)
 -- Name: likes likes_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -311,7 +311,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3034 (class 2606 OID 16601)
+-- TOC entry 3034 (class 2606 OID 16647)
 -- Name: hashPost hashPost_fk0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -320,16 +320,16 @@ ALTER TABLE ONLY public."hashPost"
 
 
 --
--- TOC entry 3035 (class 2606 OID 16606)
+-- TOC entry 3035 (class 2606 OID 16637)
 -- Name: hashPost hashPost_fk1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."hashPost"
-    ADD CONSTRAINT "hashPost_fk1" FOREIGN KEY ("postId") REFERENCES public.posts(id);
+    ADD CONSTRAINT "hashPost_fk1" FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
--- TOC entry 3032 (class 2606 OID 16591)
+-- TOC entry 3032 (class 2606 OID 16642)
 -- Name: likes likes_fk0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -338,12 +338,12 @@ ALTER TABLE ONLY public.likes
 
 
 --
--- TOC entry 3033 (class 2606 OID 16596)
+-- TOC entry 3033 (class 2606 OID 16632)
 -- Name: likes likes_fk1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT likes_fk1 FOREIGN KEY ("postId") REFERENCES public.posts(id);
+    ADD CONSTRAINT likes_fk1 FOREIGN KEY ("postId") REFERENCES public.posts(id) ON DELETE CASCADE;
 
 
 --
@@ -355,7 +355,7 @@ ALTER TABLE ONLY public.posts
     ADD CONSTRAINT posts_fk0 FOREIGN KEY ("userId") REFERENCES public.users(id);
 
 
--- Completed on 2023-08-18 18:55:59
+-- Completed on 2023-08-21 00:35:18
 
 --
 -- PostgreSQL database dump complete
