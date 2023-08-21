@@ -27,6 +27,7 @@ function insertHashTags(element, idPost) {
     [element]
   );
 }
+
 function selectLinkrs() {
   return db.query(`
   SELECT JSON_BUILD_OBJECT(
@@ -56,6 +57,7 @@ function getPostById(id) {
   );
   return post;
 }
+
 function updatePost(id, newDescription) {
   const resp = db.query(
     `
@@ -111,6 +113,10 @@ function deleteHashPost(postId) {
   return db.query(`DELETE FROM "hashPost" WHERE "postId"=$1`, [postId]);
 }
 
+function deletePostById(id) {
+  return db.query(`DELETE FROM posts WHERE id=$1;`, [id]);
+}
+
 export {
   insertPost,
   insertHashTags,
@@ -121,4 +127,5 @@ export {
   insertLike,
   deleteLike,
   deleteHashPost,
+  deletePostById,
 };
