@@ -11,6 +11,7 @@ import {
   insertLike,
   deleteLike,
   deleteHashPost,
+  deletePostById,
 } from "../repositories/post.repository.js";
 
 import { getUserById } from "../repositories/user.repository.js";
@@ -98,4 +99,23 @@ async function postLike(req, res) {
   }
 }
 
-export { postLinkr, getLinkrs, patchPost, getPostsByUser, postLike };
+async function deletePost(req, res) {
+  const { id } = req.params;
+
+  try {
+    await deletePostById(id);
+
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export {
+  postLinkr,
+  getLinkrs,
+  patchPost,
+  getPostsByUser,
+  postLike,
+  deletePost,
+};
