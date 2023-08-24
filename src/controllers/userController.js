@@ -70,10 +70,12 @@ const sendBackInfo = (req, res) => {
 
 async function getUsers(req, res) {
   const { username } = req.query;
+  const loggedId = res.locals.user.id;
+  
   let users;
   try {
-    if (!username) users = await getAllUsers();
-    else users = await getUserByUsername(username);
+    if (!username) users = await getAllUsers(loggedId);
+    else users = await getUserByUsername(username, loggedId);
     res.send(users.rows);
   } catch (err) {
     res.status(500).send(err.message);
