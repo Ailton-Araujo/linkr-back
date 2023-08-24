@@ -41,8 +41,10 @@ async function postLinkr(req, res) {
 }
 
 async function getLinkrs(req, res) {
+  const id = res.locals.user.id;
+  
   try {
-    const linkrs = await selectLinkrs();
+    const linkrs = await selectLinkrs(id);
     res.status(200).send(linkrs.rows);
   } catch (error) {
     console.log(error);

@@ -28,7 +28,7 @@ function insertHashTags(element, idPost) {
   );
 }
 
-function selectLinkrs() {
+function selectLinkrs(id) {
   return db.query(`
   SELECT JSON_BUILD_OBJECT(
     'username', author.username,
@@ -38,12 +38,14 @@ function selectLinkrs() {
   ARRAY_AGG( "usersLikes".username ORDER BY likes.id ) AS "postLikes"
   FROM posts
   JOIN users AS author ON posts."userId"=author.id
+  JOIN follows ON "followedId"=author.id
   LEFT JOIN likes ON posts.id=likes."postId"
   LEFT JOIN users AS "usersLikes" ON likes."userId"="usersLikes".id
+  WHERE "followerId"=$1  
   GROUP BY author.username, author.id, author.image, posts.id, link, description
   ORDER BY posts.id DESC
   LIMIT 20
-  `);
+  `, [id]);
 }
 
 function getPostById(id) {
