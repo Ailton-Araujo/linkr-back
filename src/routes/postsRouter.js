@@ -10,6 +10,7 @@ import {
   patchPost,
   postLike,
   deletePost,
+  sharePost,
 } from "../controllers/postController.js";
 
 const postsRouter = Router();
@@ -30,5 +31,7 @@ postsRouter.get("/posts/users/:userId", validateAuth, getPostsByUser);
 postsRouter.post("/likes", validateAuth, validateSchema(schemaLike), postLike);
 
 postsRouter.delete("/posts/:id", validateAuth, deletePost);
+
+postsRouter.post("/posts/share/:id", validateAuth, sharePost);
 
 export default postsRouter;

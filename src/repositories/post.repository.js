@@ -30,19 +30,50 @@ function insertHashTags(element, idPost) {
 
 function selectLinkrs() {
   return db.query(`
-  SELECT JSON_BUILD_OBJECT(
-    'username', author.username,
-    'id', author.id,
-    'image', author.image
-  ) AS user, posts.id, link, description, 
-  ARRAY_AGG( "usersLikes".username ORDER BY likes.id ) AS "postLikes"
-  FROM posts
-  JOIN users AS author ON posts."userId"=author.id
-  LEFT JOIN likes ON posts.id=likes."postId"
-  LEFT JOIN users AS "usersLikes" ON likes."userId"="usersLikes".id
-  GROUP BY author.username, author.id, author.image, posts.id, link, description
-  ORDER BY posts.id DESC
-  LIMIT 20
+  SELECT 
+    JSONB_BUILD_OBJECT(
+      'username', author.username,
+      'id', author.id,
+      'image', author.image
+    ) AS user, posts.id, posts.link, posts.description,
+    COALESCE(reposts.timestamp, posts.timestamp) AS timestamp,
+    ARRAY_AGG("usersLikes".username ORDER BY likes.id) AS "postLikes",
+    CASE 
+      WHEN reposts.id IS NOT NULL THEN
+        JSONB_BUILD_OBJECT(
+          'username', "userRepost".username,
+          'id', "userRepost".id
+        )
+    END AS "repostedBy",
+    
+    (SELECT COUNT(*) FROM reposts AS subReposts WHERE subReposts."postId" = posts.id) AS "repostCount"
+
+  FROM 
+    (
+    SELECT
+      id, "userId", link, description, timestamp,
+      NULL AS repost_id
+    FROM posts
+
+    UNION ALL
+
+    SELECT
+      posts.id, posts."userId", posts.link, posts.description,reposts.timestamp,
+      reposts.id AS repost_id
+    FROM reposts
+    JOIN posts ON reposts."postId" = posts.id
+    ) AS posts
+    JOIN users AS author ON posts."userId" = author.id
+    LEFT JOIN reposts ON posts.repost_id = reposts.id
+    LEFT JOIN users AS "userRepost" ON reposts."userId" = "userRepost".id
+    LEFT JOIN likes ON posts.id = likes."postId"
+    LEFT JOIN users AS "usersLikes" ON likes."userId" = "usersLikes".id
+    GROUP BY 
+      author.username, author.id, author.image, 
+      posts.id, posts.link, posts.description, 
+      reposts.id, "userRepost".id, posts.repost_id,posts.timestamp
+    ORDER BY timestamp DESC, id DESC
+    LIMIT 20;
   `);
 }
 
@@ -117,6 +148,13 @@ function deletePostById(id) {
   return db.query(`DELETE FROM posts WHERE id=$1;`, [id]);
 }
 
+function sharePostById(postId, userId) {
+  return db.query(`INSERT INTO reposts ("postId", "userId") VALUES ($1, $2);`, [
+    postId,
+    userId,
+  ]);
+}
+
 export {
   insertPost,
   insertHashTags,
@@ -128,4 +166,5 @@ export {
   deleteLike,
   deleteHashPost,
   deletePostById,
+  sharePostById,
 };
