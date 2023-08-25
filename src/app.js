@@ -2,6 +2,15 @@ import express from "express";
 import cors from "cors";
 import router from "./routes/indexRouter.js";
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js'
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.utc();
+
+
 // Server Create
 const app = express();
 
