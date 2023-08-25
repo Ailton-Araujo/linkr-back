@@ -36,11 +36,8 @@ function selectLinkrs(id) {
         'id', author.id,
         'image', author.image
     ) AS user, posts.id, posts.link, posts.description,
-    
     COALESCE(reposts.timestamp, posts.timestamp) AS timestamp,
-    
     ARRAY_AGG("usersLikes".username ORDER BY likes.id) AS "postLikes",
-	
 	CASE
 	WHEN comments.id IS NOT NULL THEN
 	ARRAY_AGG(
@@ -51,7 +48,6 @@ function selectLinkrs(id) {
 		'comment',comments.comment
 		)
    )END AS "postComments",
-    
     CASE 
         WHEN reposts.id IS NOT NULL THEN
             JSONB_BUILD_OBJECT(
@@ -59,9 +55,7 @@ function selectLinkrs(id) {
                 'id', "userRepost".id
             )
     END AS "repostedBy",
-    
     (SELECT COUNT(*) FROM reposts AS subReposts WHERE subReposts."postId" = posts.id) AS "repostCount"
-
 FROM 
     (
     SELECT
@@ -165,6 +159,13 @@ function deletePostById(id) {
   return db.query(`DELETE FROM posts WHERE id=$1;`, [id]);
 }
 
+function sharePostById(postId, userId) {
+  return db.query(`INSERT INTO reposts ("postId", "userId") VALUES ($1, $2);`, [
+    postId,
+    userId,
+  ]);
+}
+
 export {
   insertPost,
   insertHashTags,
@@ -176,4 +177,5 @@ export {
   deleteLike,
   deleteHashPost,
   deletePostById,
+  sharePostById,
 };

@@ -12,6 +12,7 @@ import {
   deleteLike,
   deleteHashPost,
   deletePostById,
+  sharePostById,
 } from "../repositories/post.repository.js";
 
 import { getUserById } from "../repositories/user.repository.js";
@@ -105,7 +106,24 @@ async function deletePost(req, res) {
   const { id } = req.params;
 
   try {
+    const post = await getPostById(id);
+    if (post.rows.length === 0) return res.sendStatus(404);
+    if (post.rows[0].userId !== res.locals.user.id) return res.sendStatus(401);
+
     await deletePostById(id);
+
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+async function sharePost(req, res) {
+  const { id } = req.params;
+  const { user } = res.locals;
+
+  try {
+    await sharePostById(id, user.id);
 
     res.sendStatus(200);
   } catch (error) {
@@ -120,4 +138,5 @@ export {
   getPostsByUser,
   postLike,
   deletePost,
+  sharePost,
 };
