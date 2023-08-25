@@ -26,7 +26,7 @@ postsRouter.get("/timeline", validateAuth, getLinkrs);
 
 postsRouter.patch("/posts/:id", validateAuth, patchPost);
 
-postsRouter.get("/posts/users/:userId", validateAuth, getPostsByUser);
+postsRouter.get("/posts", validateAuth, getPostsByUser);
 
 postsRouter.post("/likes", validateAuth, validateSchema(schemaLike), postLike);
 
