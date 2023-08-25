@@ -33,11 +33,10 @@ function selectLinkrs(id, query) {
   let values = [id];
   if (query.after) {
     values.push(query.after);
-    sql += `AND posts.timestamp >$2`; 
-  }
-  else if (query.before) {
+    sql += `AND posts.timestamp >$2`;
+  } else if (query.before) {
     values.push(query.before);
-    sql += `AND posts.timestamp <$2`; 
+    sql += `AND posts.timestamp <$2`;
   }
   return db.query(
     `
@@ -99,7 +98,8 @@ FROM
     reposts.id, "userRepost".id, posts.repost_id,posts.timestamp,comments.id
   ORDER BY timestamp DESC, id DESC
   LIMIT 10;
-  `, values
+  `,
+    values
   );
 }
 
