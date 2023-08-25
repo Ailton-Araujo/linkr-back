@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 globalThis.fetch = fetch;
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 import {
   insertPost,
@@ -33,7 +33,7 @@ async function postLinkr(req, res) {
       link,
       id: idPost.rows[0].id,
       user: info,
-      postLikes: [null],
+      postLikes: null,
     };
 
     res.status(201).send(newPost);
@@ -45,7 +45,7 @@ async function postLinkr(req, res) {
 async function getLinkrs(req, res) {
   const id = res.locals.user.id;
   const query = req.query;
-  // if (req.query.before) 
+  // if (req.query.before)
   //   req.query.before = dayjs(req.query.before).subtract(3, 'hour').toDate();
   // if (req.query.after)
   //   req.query.after = (new Date((new Date(req.query.after) - 3 * 3600 * 1000 + 1))).toISOString();
