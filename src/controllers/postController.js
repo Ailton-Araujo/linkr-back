@@ -45,10 +45,10 @@ async function postLinkr(req, res) {
 async function getLinkrs(req, res) {
   const id = res.locals.user.id;
   const query = req.query;
-  if (req.query.before) 
-    req.query.before = dayjs(req.query.before).subtract(3, 'hour').toDate();
-  if (req.query.after)
-    req.query.after = (new Date((new Date(req.query.after) - 3 * 3600 * 1000 + 1))).toISOString();
+  // if (req.query.before) 
+  //   req.query.before = dayjs(req.query.before).subtract(3, 'hour').toDate();
+  // if (req.query.after)
+  //   req.query.after = (new Date((new Date(req.query.after) - 3 * 3600 * 1000 + 1))).toISOString();
   try {
     const linkrs = await selectLinkrs(id, query);
     res.status(200).send(linkrs.rows);
