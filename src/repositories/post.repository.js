@@ -40,7 +40,7 @@ function selectLinkrs(id, query) {
   }
   return db.query(
     `
-  SELECT 
+    SELECT 
     JSONB_BUILD_OBJECT(
         'username', author.username,
         'id', author.id,
@@ -81,17 +81,17 @@ FROM
     FROM reposts
     JOIN posts ON reposts."postId" = posts.id
       JOIN follows ON reposts."userId" = follows."followedId"
-        WHERE follows."followerId"=$1 
+        WHERE "followerId"=$1 OR reposts."userId"=$1
     ) AS posts
   JOIN users AS author ON posts."userId" = author.id
   LEFT JOIN reposts ON posts.repost_id = reposts.id
   LEFT JOIN users AS "userRepost" ON reposts."userId" = "userRepost".id
-  LEFT JOIN likes ON posts.id = likes."postId"
+  LEFT JOIN likes ON posts.id = likes."postId" 
   LEFT JOIN users AS "usersLikes" ON likes."userId" = "usersLikes".id
   LEFT JOIN comments ON posts.id= comments."postId"
   LEFT JOIN users AS "userComment" ON comments."userId" = "userComment".id
   JOIN follows ON "followedId"=author.id
-  WHERE "followerId"=$1 ${sql}  
+  WHERE ("followerId"=$1 OR posts."userId" = $1) ${sql}
   GROUP BY 
     author.username, author.id, author.image, 
     posts.id, posts.link, posts.description, 
