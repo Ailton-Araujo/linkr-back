@@ -1,6 +1,6 @@
 import db from "../database/database.connection.js";
 
-export async function getPostsByHashtag(hashtag) {
+export async function getPostsByHashtag(hashtag, offset) {
   return db.query(
     `SELECT JSON_BUILD_OBJECT(
       'username', author.username,
@@ -30,7 +30,7 @@ export async function getPostsByHashtag(hashtag) {
     WHERE hashtags.hashtag = $1
     GROUP BY author.username, author.id, author.image, posts.id, link, description, comments.id
 	ORDER BY timestamp DESC, id DESC
-	LIMIT 10;`,
-    [hashtag]
+    LIMIT 10 OFFSET $2;`,
+    [hashtag, offset]
   );
 }
