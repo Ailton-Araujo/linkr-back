@@ -40,62 +40,75 @@ function selectLinkrs(id, query) {
   }
   return db.query(
     `
-    SELECT 
-    JSONB_BUILD_OBJECT(
-        'username', author.username,
-        'id', author.id,
-        'image', author.image
-    ) AS user, posts.id, posts.link, posts.description,
-    COALESCE(reposts.timestamp, posts.timestamp) AS timestamp,
-    ARRAY_AGG("usersLikes".username ORDER BY likes.id) AS "postLikes",
-	CASE
-	WHEN comments.id IS NOT NULL THEN
-	ARRAY_AGG(
-		JSONB_BUILD_OBJECT(
-			'id', "userComment".id,
-			'username', "userComment".username,
-			'image', "userComment".image,
-		'comment',comments.comment
-		)
-   )END AS "postComments",
-    CASE 
-        WHEN reposts.id IS NOT NULL THEN
-            JSONB_BUILD_OBJECT(
-                'username', "userRepost".username,
-                'id', "userRepost".id
-            )
-    END AS "repostedBy",
-    (SELECT COUNT(*) FROM reposts AS subReposts WHERE subReposts."postId" = posts.id) AS "repostCount"
-FROM 
-    (
-    SELECT
-        id, "userId", link, description, timestamp,
-        NULL AS repost_id
-    FROM posts
-
-    UNION ALL
-
-    SELECT
-        posts.id, posts."userId", posts.link, posts.description,reposts.timestamp,
-        reposts.id AS repost_id
-    FROM reposts
-    JOIN posts ON reposts."postId" = posts.id
+    WITH "LikesCount" AS (
+      SELECT "postId", ARRAY_AGG("usersLikes".username ORDER BY likes.id) AS "postLikes"
+      FROM likes
+      LEFT JOIN users AS "usersLikes" ON likes."userId" = "usersLikes".id
+      GROUP BY "postId"
+  ),
+  "DeduplicatedComments" AS (
+      SELECT
+          c."postId",
+          ARRAY_AGG(
+              JSONB_BUILD_OBJECT(
+                  'id', c."userId",
+                  'username', "userComment".username,
+                  'image', "userComment".image,
+                  'comment', c.comment
+              ) ORDER BY c.id
+          ) AS "comments"
+      FROM comments c
+      LEFT JOIN users AS "userComment" ON c."userId" = "userComment".id
+      GROUP BY c."postId"
+  )
+  SELECT 
+      JSONB_BUILD_OBJECT(
+          'username', author.username,
+          'id', author.id,
+          'image', author.image
+      ) AS user, 
+      posts.id, 
+      posts.link, 
+      posts.description,
+      COALESCE(reposts.timestamp, posts.timestamp) AS timestamp,
+      "LikesCount"."postLikes" AS "postLikes",
+      "DeduplicatedComments"."comments" AS "postComments",
+      CASE 
+          WHEN reposts.id IS NOT NULL THEN
+              JSONB_BUILD_OBJECT(
+                  'username', "userRepost".username,
+                  'id', "userRepost".id
+              )
+      END AS "repostedBy",
+      (SELECT COUNT(*) FROM reposts AS subReposts WHERE subReposts."postId" = posts.id) AS "repostCount"
+  FROM 
+      (
+      SELECT
+          id, "userId", link, description, timestamp,
+          NULL AS repost_id
+      FROM posts
+  
+      UNION ALL
+  
+      SELECT
+          posts.id, posts."userId", posts.link, posts.description,reposts.timestamp,
+          reposts.id AS repost_id
+      FROM reposts
+      JOIN posts ON reposts."postId" = posts.id
       JOIN follows ON reposts."userId" = follows."followedId"
-        WHERE "followerId"=$1 OR reposts."userId"=$1
-    ) AS posts
+      WHERE "followerId"=$1 OR reposts."userId"=$1
+      ) AS posts
   JOIN users AS author ON posts."userId" = author.id
   LEFT JOIN reposts ON posts.repost_id = reposts.id
   LEFT JOIN users AS "userRepost" ON reposts."userId" = "userRepost".id
-  LEFT JOIN likes ON posts.id = likes."postId" 
-  LEFT JOIN users AS "usersLikes" ON likes."userId" = "usersLikes".id
-  LEFT JOIN comments ON posts.id= comments."postId"
-  LEFT JOIN users AS "userComment" ON comments."userId" = "userComment".id
+  LEFT JOIN "LikesCount" ON posts.id = "LikesCount"."postId"
+  LEFT JOIN "DeduplicatedComments" ON posts.id = "DeduplicatedComments"."postId"
   JOIN follows ON "followedId"=author.id
   WHERE ("followerId"=$1 OR posts."userId" = $1) ${sql}
   GROUP BY 
-    author.username, author.id, author.image, 
-    posts.id, posts.link, posts.description, 
-    reposts.id, "userRepost".id, posts.repost_id,posts.timestamp,comments.id
+      author.username, author.id, author.image, 
+      posts.id, posts.link, posts.description, 
+      reposts.id, "userRepost".id, posts.repost_id,posts.timestamp, "LikesCount"."postLikes", "DeduplicatedComments"."comments"
   ORDER BY timestamp DESC, id DESC
   LIMIT 10;
   `,
