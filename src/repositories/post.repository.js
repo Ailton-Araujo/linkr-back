@@ -28,7 +28,7 @@ function insertHashTags(element, idPost) {
   );
 }
 
-function selectLinkrs() {
+function selectLinkrs(id) {
   return db.query(`
   SELECT 
     JSONB_BUILD_OBJECT(
@@ -84,13 +84,15 @@ LEFT JOIN likes ON posts.id = likes."postId"
 LEFT JOIN users AS "usersLikes" ON likes."userId" = "usersLikes".id
 LEFT JOIN comments ON posts.id= comments."postId"
 LEFT JOIN users AS "userComment" ON comments."userId" = "userComment".id
+JOIN follows ON "followedId"=author.id
+WHERE "followerId"=$1  
 GROUP BY 
     author.username, author.id, author.image, 
     posts.id, posts.link, posts.description, 
     reposts.id, "userRepost".id, posts.repost_id,posts.timestamp,comments.id
 ORDER BY timestamp DESC, id DESC
-LIMIT 20;
-  `);
+LIMIT 10;
+  `, [id]);
 }
 function getPostById(id) {
   const post = db.query(
